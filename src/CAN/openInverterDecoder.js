@@ -3,10 +3,25 @@ import { DATA_MAP } from "../dataKeys.js";
 // NOTE: (note for OpenInverter that uses LittleEndian(LE) functions)
 const OPENINVERTER_CAN_MAP = {
 
+   /**
+    * 371 - 881 decimal
+    * HV battery voltage as reported by the inverter
+    */
    0x371: (data) => {
      
     return [
       { id: DATA_MAP.INV_HV_BATT_VOLTAGE, data: data.readInt32LE(0)},
+    ];
+  },
+
+   /**
+    * 373 - 883 decimal
+    * Inverter error codes
+    */
+   0x373: (data) => {
+     
+    return [
+      { id: DATA_MAP.INV_ERROR, data: data.readInt8(0)},
     ];
   },
 
