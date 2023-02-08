@@ -93,13 +93,11 @@ export default (carSettings, canChannel) => {
     if (carSettings.buttons_enabled) {
       buttons.start(); // start listening for button presses
     }
-
     initializeFuel(gallonsLeft || carSettings.tank_size);
     initializeSpeedo();
     ecuDataStore.updateWarning(WARNING_KEYS.ECU_COMM, true);
     ecuDataStore.write(DATA_MAP.TEMP_TYPE, 0); // default to F
     ecuDataStore.write(DATA_MAP.PRESSURE_TYPE, 1); // default to kpa (used for MAP) / /make sure you front end gets what it expects!
-
     initializeOdometer(odometer);
   };
 
@@ -113,12 +111,12 @@ export default (carSettings, canChannel) => {
     }
   }
 
-  const updateValue = ({ dataKey, data }) => {
-    // do any special handling depending on the new updated value
-    switch (dataKey) {
-      case DATA_MAP.FUEL_FLOW:
-        const newMsSample = performance.now();
-        const msDelta = newMsSample - msSample; // ms since last sample
+  const updateMPG = (data) => {
+    if (getSpeed() < 0) {
+      return;
+    }
+    const newMsSample = performance.now();
+    const msDelta = newMsSample - msSample; // ms since last sample
 
     //  calculate fuel consumption based on the last sample
     const gpMs = (data * 0.1621) / 3600000; // convert from pounds/hour to gal/hour, then to to gal/millisecond
@@ -129,34 +127,37 @@ export default (carSettings, canChannel) => {
     // update the fuel level
     gallonsLeft -= gallonsConsumed;
 
-        // SPEED BASED DISTANCE - distance (m) = speed (m/millisecond) * time (ms)
-        // calculate distance since last sample
-        // we do this because the odometer is in mile denom; where as can get tiny slices of a mile traveled based on the speed and time
-        distance =
-          (ecuDataStore.read(DATA_MAP.GPS_SPEEED) / 3600000) * msDelta;
+    // SPEED BASED DISTANCE - distance (m) = speed (m/millisecond) * time (ms)
+    // calculate distance since last sample
+    // we do this because the odometer is in mile denom; where as can get tiny slices of a mile traveled based on the speed and time
+    distance =
+      (getSpeed() / 3600000) * msDelta;
 
     // calc average MPGs
     const currentMpg = Math.floor(distance / gallonsConsumed);
 
-        // add a new sample every 10 seconds
-        if (newMsSample - lastMpgSampleTime > 10000) {
-          lastMpgSampleTime = newMsSample;
-          ecuDataStore.averageMPGPoints.push(mpgSampler.average);
-          ecuDataStore.write(
-            DATA_MAP.AVERAGE_MPG_POINT_INDEX,
-            ecuDataStore.averageMPGPoints.frontOffset
-          );
-          ecuDataStore.write(
-            DATA_MAP.AVERAGE_MPG,
-            ecuDataStore.averageMPGPoints.average
-          );
-          mpgSampler.reset();
-        } else {
-          mpgSampler.push(currentMpg);
-        }
+    // add a new sample every 10 seconds
+    if (newMsSample - lastMpgSampleTime > 10000) {
+      lastMpgSampleTime = newMsSample;
+      ecuDataStore.averageMPGPoints.push(mpgSampler.average);
+      ecuDataStore.write(
+        DATA_MAP.AVERAGE_MPG_POINT_INDEX,
+        ecuDataStore.averageMPGPoints.frontOffset
+      );
+      ecuDataStore.write(
+        DATA_MAP.AVERAGE_MPG,
+        ecuDataStore.averageMPGPoints.average
+      );
+      mpgSampler.reset();
+    } else {
+      mpgSampler.push(currentMpg);
+    }
 
-        ecuDataStore.write(DATA_MAP.CURRENT_MPG, currentMpg);
-        updateFuelLeft();
+    ecuDataStore.write(DATA_MAP.CURRENT_MPG, currentMpg);
+    msSample = newMsSample;
+    lastFuelSample = gpMs;
+  }
+
 
   const updateValue = ({ dataKey, data }) => {
     // do any special handling depending on the new updated value
