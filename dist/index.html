@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>AutoDash</title><script defer="defer" src="/js/runtime.208e95aabf2c271a71cc.bundle.js"></script><script defer="defer" src="/js/main.8c7fff9a1f0394c201d5.bundle.js"></script></head><body></body><style>html,
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>AutoDash</title><script defer="defer" src="/js/runtime.c7a47e64849c33ead48b.bundle.js"></script><script defer="defer" src="/js/main.dafa692d1fb7af2ac0eb.bundle.js"></script></head><body><div id="tach_container"><div class="tach"><image class="" src="./assets/images/tach-background.png"/><image id="tach_needle" src="./assets/images/needle.png"/><image class="cap" src="./assets/images/cap.png"/></div></div></body><style>html,
     body {
       width: 100%;
       height: 100%;
@@ -7,10 +7,19 @@
       overflow: hidden;
       background: transparent;
     }
-
-    canvas {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
+    .tach > img {
       position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .tach {
+      position: relative;
+      width: 323px;
+      height: 318px;
+    }
+    #tach_needle {
+      will-change: transform;
+      transition: transform 0.1s;
     }</style></html>
