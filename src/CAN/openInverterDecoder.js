@@ -25,6 +25,17 @@ const OPENINVERTER_CAN_MAP = {
     ];
   },
 
+   /**
+    * 135 - 309 decimal
+    * Inverter amp draw
+    */
+   0x135: (data) => {
+
+    return [
+      { id: DATA_MAP.INV_AMPS, data: data.readInt16LE(0)},
+    ];
+  },
+
   0x136: (data) => {
     return [
       { id: DATA_MAP.INV_CTS, data: data.readUInt8(6)},

@@ -69,6 +69,7 @@ export const DATA_MAP = {
   INV_CTS: { id: keygen(), byteType: TYPES.INT16 },  // coolant (defaults to F if TEMP_TYPE isnt set )
   MOTOR_CTS: { id: keygen(), byteType: TYPES.INT16 },  // coolant (defaults to F if TEMP_TYPE isnt set )
   INV_ERROR: { id: keygen(), byteType: TYPES.INT8},  // inverter error code
+  INV_AMPS: { id: keygen(), byteType: TYPES.INT16},  // DC amps drawn by inverter
 };
 Object.freeze(DATA_MAP);
 
