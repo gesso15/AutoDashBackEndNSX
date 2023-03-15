@@ -36,6 +36,12 @@ const OPENINVERTER_CAN_MAP = {
     ];
   },
 
+   /**
+    * 136 - 310 decimal
+    * Inverter coolant temp
+    * Motor coolant temp
+    * Motor RPM
+    */
   0x136: (data) => {
     return [
       { id: DATA_MAP.INV_CTS, data: data.readUInt8(6)},
@@ -43,6 +49,18 @@ const OPENINVERTER_CAN_MAP = {
       { id: DATA_MAP.RPM, data: data.readUInt16LE(2)},
     ];
   },
+
+   /**
+    * 137 - 311 decimal
+    * Inverter amp draw
+    */
+   0x137: (data) => {
+
+    return [
+      { id: DATA_MAP.TPS, data: data.readInt8(0)},
+    ];
+  },
+
   
 };
 
